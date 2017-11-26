@@ -18,7 +18,7 @@ namespace golf_net
 
 		private void Shot_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(APC.PHASE_RESULT);
+			Program.ChageForm(APC.PHASE_RESULT);
 		}
 	}
 }

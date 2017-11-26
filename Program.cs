@@ -7,8 +7,10 @@ namespace golf_net
 {
 	public static class Program
 	{
+		delegate int Tinvoke(int idx);
+
+
 		public static FormAlpha		m_formAlpha = null;
-		public static PGN.TcpCln	m_tcpCln    = null;
 
 		/// <summary>
 		/// 해당 응용 프로그램의 주 진입점입니다.
@@ -19,13 +21,33 @@ namespace golf_net
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			m_tcpCln    = new PGN.TcpCln();
 			m_formAlpha = new FormAlpha();
-
 
 			Application.Run(m_formAlpha);
 		}
 
 		public static FormAlpha  GetMainForm() { return m_formAlpha; }
-		public static PGN.TcpCln GetMainNet () { return m_tcpCln;    }
+		
+		static public int ChageForm(int phase)
+		{
+			if(0 > phase || phase >= APC.PHASE_MAX)
+				return APC.EFAIL;
+
+			if(m_formAlpha.m_phase == phase)
+				return APC.OK_AL;
+
+
+			if(m_formAlpha.InvokeRequired)
+			{
+				m_formAlpha.Invoke(new Tinvoke(ChageForm), phase);
+			}
+			else
+			{
+				m_formAlpha.m_form[m_formAlpha.m_phase].Hide();
+				m_formAlpha.m_phase = phase;
+				m_formAlpha.m_form[m_formAlpha.m_phase].Show();
+			}
+
+			return APC.OK;
+		}
 	}}

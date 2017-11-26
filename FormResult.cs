@@ -18,17 +18,17 @@ namespace golf_net
 
 		private void btnLobby_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(APC.PHASE_LOBBY);
+			Program.ChageForm(APC.PHASE_LOBBY);
 		}
 
 		private void btnReplay_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(APC.PHASE_PLAY);
+			Program.ChageForm(APC.PHASE_PLAY);
 		}
 
 		private void btnQuit_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(APC.PHASE_BEGIN);
+			Program.ChageForm(APC.PHASE_BEGIN);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿// UDP class.
+﻿// UDP
 //
 //+++++++1+++++++++2+++++++++3+++++++++4+++++++++5+++++++++6+++++++++7+++++++++8
 
@@ -18,7 +18,7 @@ namespace PGN
 	{
 		// for controll
 		protected	byte[]			m_rcvB	= new byte[NTC.PCK_DATA];			// receive buffer for packet
-		protected	int				m_rcvN	= -1;								// current received count
+		protected	int				m_rcvN	= 0;								// current received count
 
 		protected	List<byte[]>	m_sndB	= new List<byte[]>();				// send queue buffer
 		protected	int				m_sndC	= 0;								// sending complete?
@@ -26,7 +26,6 @@ namespace PGN
 
 		protected	uint			m_nSqc	= 0;								// packet sequence
 		protected	PGN.Packet		m_sPck	= new PGN.Packet();					// for string message
-		protected	byte[]			m_vCrp	= new byte[NTC.PCK_KEY];			// key for crypto
 
 		override public void Destroy()
 		{
@@ -57,7 +56,6 @@ namespace PGN
 			}
 
 			Array.Clear(m_rcvB, 0, m_rcvB.Length);
-			Array.Clear(m_vCrp, 0, m_vCrp.Length);
 			m_sPck.Reset();
 		}
 
@@ -96,11 +94,11 @@ namespace PGN
 		}
 
 
-		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 		// Inner Process...
 
 
-		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 		// Interface ...
 
 		public int SendTo(string str, ushort op)

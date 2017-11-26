@@ -14,8 +14,8 @@ namespace golf_net
 {
 	public partial class FormAlpha:Form
 	{
-		protected int			m_phase   = APC.PHASE_BEGIN;
-		protected List<Form>	m_form    = new List<Form>();
+		public int			m_phase   = APC.PHASE_BEGIN;
+		public List<Form>	m_form    = new List<Form>();
 		FormBegin				formBegin = new FormBegin();
 		FormLobby				formLobby = new FormLobby();
 		FormPlay				formPlay  = new FormPlay();
@@ -44,22 +44,6 @@ namespace golf_net
 			}
 
 			m_form[m_phase].Show();
-		}
-
-		public int ChageForm(int phase)
-		{
-			if(0 > phase || phase >= APC.PHASE_MAX)
-				return APC.EFAIL;
-
-			if(m_phase == phase)
-				return APC.OK_AL;
-
-
-			m_form[m_phase].Hide();
-			m_phase = phase;
-			m_form[m_phase].Show();
-
-			return APC.OK;
 		}
 
 		private void FormAlpha_Load(object sender,EventArgs e)

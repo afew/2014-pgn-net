@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using PGN;
+
 namespace golf_net
 {
 	public partial class FormBegin:Form
@@ -14,51 +16,23 @@ namespace golf_net
 		public FormBegin()
 		{
 			InitializeComponent();
-			this.txtUID.Text = "User Id";
-			this.txtPWD.Text = "User Password";
+			this.txtIp.Text = TcpApp.net_ip;
+			this.txtPt.Text = TcpApp.net_pt;
+
+			this.txtUID.Text = TcpApp.net_uid;
+			this.txtPWD.Text = TcpApp.net_pwd;
 		}
 		
 		
 		private void btnConnect_Click(object sender,EventArgs e)
 		{
-			PGN.TcpCln pNet = Program.GetMainNet ();
-
-			pNet.OnConnect = OnConnect;
-			pNet.OnRecv    = OnRecv;
-			pNet.Create(null, "192.168.0.7", 20001);
-			pNet.Connect();
+			TcpApp.SendConnect(this.txtIp.Text, this.txtPt.Text);
 		}
 
 		private void btnLogin_Click(object sender,EventArgs e)
 		{
-			//MessageBox.Show("Hello world");
-			Program.GetMainForm().ChageForm(APC.PHASE_LOBBY);
-
-			PGN.TcpCln pNet = Program.GetMainNet ();
-
-			pNet.SendLogin("AAAAAA", "BBBBB");
+			TcpApp.SendLogin(this.txtUID.Text, this.txtPWD.Text );
 		}
-
-
-		protected void OnConnect()
-		{
-			PGN.TcpCln pNet = Program.GetMainNet ();
-			PGLog.LOGI("On Connect");
-		}
-
-		protected void OnRecv()
-		{
-			PGLog.LOGI("On Recv");
-			//// game proc....
-			//byte[] b = new byte[20]{;
-
-			//PGN.Packet pck = new PGN.Packet();
-			//pck.Reset();
-
-			//pck.AddData();
-			//NTC.CS_REQ_LOGIN;
-		}
-
 	}
 
 }

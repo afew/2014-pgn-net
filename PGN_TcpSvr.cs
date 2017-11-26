@@ -1,4 +1,4 @@
-﻿// Tcp Server class.
+﻿// Tcp Server
 //
 //+++++++1+++++++++2+++++++++3+++++++++4+++++++++5+++++++++6+++++++++7+++++++++8
 
@@ -32,7 +32,6 @@ namespace PGN
 				TcpBase	p = (TcpBase)v;
 				RemoveClient(p);
 			}
-
 
 			return NTC.EFAIL;
 		}
@@ -88,7 +87,6 @@ namespace PGN
 				//m_scH.Shutdown(SocketShutdown.Both);
 				m_scH.Close();
 				m_scH = null;
-
 				m_sIp = "";
 				m_sPt = 0;
 			}
@@ -101,7 +99,7 @@ namespace PGN
 				return NTC.EFAIL;
 
 			EndPoint	sdH   = scH.RemoteEndPoint;
-			int			netId = PGN.Packet.GetSocketId(ref scH);
+			uint		netId = PGN.Packet.GetSocketId(ref scH);
 			TcpCln		pCln  = new TcpCln(netId);
 
 			pCln.Create(this, scH, sdH);
@@ -112,7 +110,7 @@ namespace PGN
 
 			PGLog.LOGI("AddNewClient::" + crpKey);
 
-			pCln.Send(crpKey, NTC.OP_DEFAULT);
+			pCln.Send(crpKey, NTC.GP_DEFAULT);
 
 			m_vCln.Add(pCln);
 			pCln.Recv();
@@ -127,7 +125,7 @@ namespace PGN
 				return;
 
 
-			int key = m_vCln[n].NetId;
+			uint key = m_vCln[n].NetId;
 
 			m_vCln[n].Destroy();
 			m_vCln.RemoveAt(n);
@@ -137,11 +135,13 @@ namespace PGN
 		}
 
 
-		////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 		// Inner Process...
 
 		protected void WorkAcp()
 		{
+			int		hr = NTC.OK;
+
 			try
 			{
 				while( true)
@@ -154,20 +154,24 @@ namespace PGN
 
 					lock (m_oLock)
 					{
-						int hr = AddNewClient(scH);
+						hr = AddNewClient(scH);
 						if (0 > hr)
 							PGLog.LOGI("WorkAcp::Client List is Full");
 					}
 				}
 			}
 
-			catch (SocketException)
+			catch(SocketException e0)
 			{
-				PGLog.LOGW("WorkAcp::SocketException");
+				PGLog.LOGW("WorkAcp::SocketException::" + e0.ToString() );
+				hr = NTC.EFAIL_SOCK;
+				IoEvent(NTC.EV_ACCEPT, hr, this.m_scH, 0, this);
 			}
-			catch (Exception)
+			catch(Exception e1)
 			{
-				PGLog.LOGW("WorkAcp::Exception");
+				PGLog.LOGW("WorkAcp::Exception::" + e1.ToString() );
+				hr = NTC.EFAIL;
+				IoEvent(NTC.EV_ACCEPT, hr, this.m_scH, 0, this);
 			}
 		}
 	}
