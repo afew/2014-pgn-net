@@ -1,139 +1,315 @@
-﻿// DF Packet Struct
+﻿// PGN Base
 //
 // type	byte
-// len	2	: packet length
-// opp	2	: operation protocol
+// len	2byte : packet length
+// opp	2byte : operation protocol
 //
-////////////////////////////////////////////////////////////////////////////////
+//+++++++1+++++++++2+++++++++3+++++++++4+++++++++5+++++++++6+++++++++7+++++++++8
+
+#define DEBUG
+
+#if UNITY_EDITOR
+using UnityEngine;
+#endif
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 
-
-static class PGN
+public static class PGLog
 {
-	// packet header
-	public const int PCK_DATA				= 1360					;	// packet data size
-	public const int PCK_HEAD				= 2 + 2					;	// len(2) + opp(2)
-	public const int PCK_MAX				= PCK_HEAD + PCK_DATA	;	// max mtu for application
+#if UNITY_EDITOR
+	public static void LOGI(string str)
+	{
+		#if DEBUG
+		Debug.Log(str);
+		#endif
+	}
 
-	// Network state
-	public const int OK						= 0						;	// Success
-	public const int EFAIL					= -1					;	// Failed
-	public const int WAIT					= 1						;	// Network wait message after sending data
-	public const int DEFAULT				= OK					;	// Network Default state
+	public static void LOGW(string str)
+	{
+		#if DEBUG
+		Debug.LogWarning(str);
+		#endif
+	}
 
-	// Operation Protocol
-	public const int CS_REQ_LOGIN			= 103					;	// snd: character name: uchar20
-	public const int SC_ANS_LOGIN			= 104					;	// rcv: UID(uint32) + character name(char20)
-	public const int SC_BROADCAST_USERLIST	= 105					;	// rcv: User Number(uint8) + [UID(uint32) + charcater name(uchar20) + owner(uint8) + ready(uint8)] * N
-	public const int SC_BROADCAST_LOGOUT	= 114					;	// rcv: UID
+	public static void LOGE(string str)
+	{
+		#if DEBUG
+		Debug.LogError(str);
+		#endif
+	}
 
-	public const int CS_REQ_READY			= 106					;	// snd:
-	public const int SC_BROADCAST_READY		= 107					;	// rcv: UID, ready?(RET_READY:RET_NOTREADY)
+#else
+	public static void LOGI(string str)
+	{
+		#if DEBUG
+		Console.WriteLine("[I]:" + str);
+		#endif
+	}
 
-	public const int CS_REQ_GO				= 108					;	// snd:
-	public const int SC_REQ_GO				= 109					;	// rcv: uint8
-	public const int SC_BROADCAST_START		= 110					;	// rcv: UID, ready?(RET_READY:RET_NOTREADY)
+	public static void LOGW(string str)
+	{
+		#if DEBUG
+		Console.WriteLine("[W]:" + str);
+		#endif
+	}
 
-	public const int CS_REQ_STOP			= 111					;	// snd:
-	public const int SC_BROADCAST_STOP		= 112					;	// rcv: UID
-	public const int SC_BROADCAST_QUIT		= 113					;	// rcv:
-
-	public const int CS_REQ_ECHO			= 101					;	// snd/rcv: 1:1 data max(1024byte)
-	public const int CS_REQ_BROADCAST		= 102					;	// snd/rcv: 1:n data max(1024byte)
-
-	public const int RST_OWNER_TRUE			= 1						;	// snd/rcv: is owner
-	public const int RST_OWNER_FALSE		= 2						;	// snd/rcv: is not owner
-	public const int RST_READY_TRUE			= 1						;	// snd/rcv: is ready
-	public const int RST_READY_FALSE		= 2						;	// snd/rcv: is not ready
-	public const int RST_SUCCESS			= 1						;	// snd/rcv: result success
-	public const int RST_FAIL				= 2						;	// snd/rcv: result failed
+	public static void LOGE(string str)
+	{
+		#if DEBUG
+		Console.WriteLine("[E]:" + str);
+		#endif
+	}
+#endif
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Packet buffer
-
-public class PGN_Packet
+namespace PGN
 {
-	private short	len = 0;
-	private	byte[]	buf	= new byte[PGN.PCK_MAX];
-
-	public	short	Len	{ get{ return len; }}
-	public	byte[]	Buf { get{ return buf; }}
-
-
-	public PGN_Packet()	{	this.Reset();	}
-	public void Reset() {  Array.Clear(buf, 0, PGN.PCK_MAX); len = PGN.PCK_HEAD; }
-
-	public void	PacketAdd(byte[] v, int l)
+	////////////////////////////////////////////////////////////////////////////
+	// Packet
+	public class Packet
 	{
-		Array.Copy(v, 0, this.buf, len, l);
-		this.len += (short)l;
+		// atrribute
+		protected ushort	m_len = 0;								// total length
+		protected ushort	m_opp = 0;								// op code
+		protected byte[]	m_buf = new byte[NTC.PCK_MAX];			// buffer
+
+		public	ushort		Len	{ get{ return m_len;} set{m_len = value; byte[] b=BitConverter.GetBytes(m_len); Array.Copy(b,0, m_buf,  0, 2); }}
+		public	ushort		Opp	{ get{ return m_opp;} set{m_opp = value; byte[] b=BitConverter.GetBytes(m_opp); Array.Copy(b,0, m_buf,  2, 2); }}
+		public	byte[]		Buf { get{ return m_buf;}}
+
+		//public	int			DataLen{ get{ return (m_len - NTC.PCK_HEAD); }}
+		//public	byte[]		DataBuf{ get{
+		//        int l = m_len - NTC.PCK_HEAD;
+		//        var v = new byte[l];
+		//        Array.Copy(m_buf, NTC.PCK_HEAD, v, 0, l);
+		//        return v;
+		//    }
+		//}
+
+		public	int			DataLen{ get{ return m_len; }}
+		public	byte[]		DataBuf{ get{
+				int l = m_len;
+				var v = new byte[l];
+				Array.Copy(m_buf, NTC.PCK_HEAD, v, 0, l);
+				return v;
+			}
+		}
+
+		public Packet()
+		{
+			this.Reset();
+		}
+
+		public Packet(ref byte[] s, int l)
+		{
+			this.Reset();
+			SetupFrom(ref s, l);
+		}
+
+
+		// Methods
+		public void Reset()
+		{
+			Array.Clear(m_buf, 0, m_buf.Length);
+
+			m_len = 0;
+			m_opp = 0;
+		}
+
+		// byte array
+		public void	AddData(byte[] v, int l)
+		{
+			Array.Copy(v, 0, m_buf, NTC.PCK_HEAD + m_len, l);
+			m_len += (ushort)l;
+		}
+
+		// float
+		public void	AddData(float v)
+		{
+			byte[] b = BitConverter.GetBytes(v);
+			this.AddData(b, b.Length);
+		}
+
+		// double
+		public void	AddData(double v)
+		{
+			byte[] b = BitConverter.GetBytes(v);
+			this.AddData(b, b.Length);
+		}
+
+		// int
+		public void	AddData(int v)
+		{
+			byte[] b = BitConverter.GetBytes(v);
+			this.AddData(b, b.Length);
+		}
+
+		// short
+		public void	AddData(short v)
+		{
+			byte[] b = BitConverter.GetBytes(v);
+			this.AddData(b, b.Length);
+		}
+
+		// short
+		public void	AddData(byte v)
+		{
+			byte[] b = BitConverter.GetBytes(v);
+			this.AddData(b, b.Length);
+		}
+
+
+		// string
+		public void	AddData(string v)
+		{
+			int l = v.Length;
+
+			for(int n=0; n< l; ++n)
+				m_buf[m_len + n] = (byte)v[n];
+
+			m_len += (ushort)l;
+		}
+
+		public void CopyFrom(ref byte[] src, int offset, int srcIdx, int l)
+		{
+			Array.Copy(src, srcIdx, m_buf, offset, l);
+		}
+
+		public void CopyTo(ref byte[] dst, int offset, int l)
+		{
+			Array.Copy(m_buf, offset, dst, 0, l);
+		}
+
+		public void SetupFrom(ref byte[] s,int l)
+		{
+			Array.Copy(s, 0, m_buf, 0, l);
+
+			m_len = (ushort)System.BitConverter.ToInt16(m_buf,  0 );
+			m_opp = (ushort)System.BitConverter.ToInt16(m_buf,  2 );
+		}
+
+		public void EnCode(ushort _opp)	//, int sqc)
+		{
+			m_opp = _opp;
+
+			byte[] cLen = BitConverter.GetBytes(m_len);
+			byte[] cOpp = BitConverter.GetBytes(m_opp);
+
+			Array.Copy(cLen, 0, m_buf,  0, 2);	// len 2: packet length
+			Array.Copy(cOpp, 0, m_buf,  2, 2);	// opp 2: operation protocol
+		}
+
+
+		// util
+		public static int EnCrypt(ref byte[] dst, ref int lenD, byte[] src, int lenS)
+		{
+			Array.Clear(dst, 0, dst.Length);
+			Array.Copy(src, dst, lenS);
+
+			lenD  = lenS;
+			return lenD;
+		}
+
+		public static int DeCrypt(ref byte[] dst, ref int lenD, byte[] src, int lenS)
+		{
+			Array.Clear(dst, 0, dst.Length);
+			Array.Copy(src, dst, lenS);
+
+			lenD  = lenS;
+			return lenD;
+		}
+
+
+		public static int Copy(ref byte[] dst, ref int lenD, byte[] src, int lenS)
+		{
+			Array.Clear(dst, 0, dst.Length);
+			Array.Copy(src, dst, lenS);
+
+			lenD  = lenS;
+			return lenD;
+		}
+
+
+		public static int GetSocketId(ref System.Net.Sockets.Socket scH)
+		{
+			return scH.Handle.ToInt32();
+		}
 	}
 
-	public void	PacketAdd(float v)
+
+
+	////////////////////////////////////////////////////////////////////////////
+	// Tcp base
+
+	public delegate void PGN_Fnc();												// callback
+
+	public abstract class TcpBase
 	{
-		byte[] b = BitConverter.GetBytes(v);
-		this.PacketAdd(b, b.Length);
+		// for controll
+		protected int			m_aId	= NTC.OK;								// id from server
+		protected TcpBase		m_pPrn	= null;									// Parent instance
+		protected object		m_oLock	= new object();							// synchronizer
+
+		// for network socket
+		protected Socket		m_scH   = null;
+		protected EndPoint		m_sdH	= null;
+		protected string		m_sIp	= "";									// default ip
+		protected int			m_sPt	= 0;									// default port
+
+		abstract public void	Destroy();
+		virtual  public int		Query(string s, object v){	return PGN.NTC.EFAIL; }
+		virtual  public Socket	GetSocket()				{	return m_scH; }
+
+		public int		NetId
+		{
+			get { return m_aId;  }
+			set { m_aId = value; }
+		}
 	}
 
-	public void	PacketAdd(int v)
+
+	////////////////////////////////////////////////////////////////////////////
+	// udp base
+	public abstract class UdpBase
 	{
-		byte[] b = BitConverter.GetBytes(v);
-		this.PacketAdd(b, b.Length);
+		// for controll
+		protected int			m_bHost	= 0;									// Client: 0, server: 1
+		protected object		m_oLock	= new object();							// synchronizer
+
+		// for network socket
+		protected Socket		m_scH   = null;
+		protected EndPoint		m_sdH	= null;									// local
+		protected EndPoint		m_sdR	= null;									// remote
+		protected string		m_sIp	= "";									// server ip
+		protected int			m_sPt	= 0;									// server port
+
+		abstract public void	Destroy();
+		virtual  public int		Query(string s, object v){	return PGN.NTC.EFAIL; }
+		virtual  public Socket	GetSocket()				{	return m_scH; }
+
+
+		public void CloseSocket()
+		{
+			if(null == m_scH)
+				return;
+
+			lock(m_oLock)
+			{
+				m_scH.Shutdown(SocketShutdown.Both);
+				m_scH.Close();
+				m_scH = null;
+				m_sdH = null;
+				m_sdR = null;
+
+				m_sIp = "";
+				m_sPt = 0;
+			}
+		}
 	}
-
-	public void	PacketAdd(string v)
-	{
-		int l = v.Length;
-
-		for(int n=0; n< l; ++n)
-			this.buf[len + n] = (byte)v[n];
-
-		this.len += (short)l;
-	}
-
-
-	private	static byte[]	m_sep = new byte[2] {0xCC, 0xCC};
-	private static byte[]	m_ver = new byte[2] {0x13, 0x41};
-
-	public void EnPack(int opcode, short encryption, int sequnce)
-    {
-		byte[] bbEnc = BitConverter.GetBytes(encryption);
-
-		byte[] bbLen = BitConverter.GetBytes(len);
-		byte[] bbOpc = BitConverter.GetBytes(opcode);
-		byte[] bbSqc = BitConverter.GetBytes(sequnce);
-
-		// sep	2	: separater	0xcccc =110011001100100
-		// ver	2	: version year, month, day/2 Exception) 0x134B =>2013/04/22
-		// crp	2	: crypto method. nothing: 0, method: [1,65535]
-		//
-		// len	2	: packet length
-		// opp	4	: operation protocol
-		// sqc	4	: packet sequence(auto AddressFamily)
-
-		Array.Copy(m_sep, 0, this.buf,  0, 2);
-		Array.Copy(m_ver, 0, this.buf,  2, 2);
-		Array.Copy(bbEnc, 0, this.buf, 12, 2);
-
-		Array.Copy(bbLen, 0, this.buf,  6, 2);
-		Array.Copy(bbOpc, 0, this.buf,  8, 4);
-		Array.Copy(bbSqc, 0, this.buf, 16, 4);
-    }
-
-
-	public static int EnCode(ref byte[] dst, ref int lenD, byte[] src, int lenS)
-    {
-		byte[] buf = dst;
-
-		Array.Clear(buf, 0, PGN.PCK_MAX);
-		Array.Copy(src, buf, lenS);
-
-		lenD  = lenS;
-		return lenD;
-    }
 }
-
 

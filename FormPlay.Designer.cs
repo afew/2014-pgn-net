@@ -1,4 +1,4 @@
-﻿namespace ydnet
+﻿namespace golf_net
 {
 	partial class FormPlay
 	{
@@ -49,7 +49,7 @@
 			// Shot
 			// 
 			this.Shot.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.Shot.Location = new System.Drawing.Point(152,349);
+			this.Shot.Location = new System.Drawing.Point(152,353);
 			this.Shot.Name = "Shot";
 			this.Shot.Size = new System.Drawing.Size(390,54);
 			this.Shot.TabIndex = 9;
@@ -193,7 +193,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F,12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(634,512);
+			this.ClientSize = new System.Drawing.Size(600,500);
 			this.ControlBox = false;
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.textBest);

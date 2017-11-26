@@ -1,4 +1,4 @@
-﻿namespace ydnet
+﻿namespace golf_net
 {
 	partial class FormBegin
 	{
@@ -34,15 +34,16 @@
 			this.UID = new System.Windows.Forms.Label();
 			this.PWD = new System.Windows.Forms.Label();
 			this.textIP = new System.Windows.Forms.TextBox();
-			this.textPt = new System.Windows.Forms.TextBox();
+			this.textPort = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
+			this.btnConnect = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// txtUID
 			// 
 			this.txtUID.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.txtUID.Location = new System.Drawing.Point(191,202);
+			this.txtUID.Location = new System.Drawing.Point(191,230);
 			this.txtUID.Margin = new System.Windows.Forms.Padding(4);
 			this.txtUID.Name = "txtUID";
 			this.txtUID.Size = new System.Drawing.Size(228,24);
@@ -60,7 +61,7 @@
 			// Login
 			// 
 			this.Login.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(0)));
-			this.Login.Location = new System.Drawing.Point(191,330);
+			this.Login.Location = new System.Drawing.Point(191,289);
 			this.Login.Margin = new System.Windows.Forms.Padding(4);
 			this.Login.Name = "Login";
 			this.Login.Size = new System.Drawing.Size(229,64);
@@ -73,7 +74,7 @@
 			// 
 			this.UID.AutoSize = true;
 			this.UID.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.UID.Location = new System.Drawing.Point(130,209);
+			this.UID.Location = new System.Drawing.Point(130,237);
 			this.UID.Margin = new System.Windows.Forms.Padding(4,0,4,0);
 			this.UID.Name = "UID";
 			this.UID.Size = new System.Drawing.Size(53,17);
@@ -100,14 +101,14 @@
 			this.textIP.Size = new System.Drawing.Size(229,24);
 			this.textIP.TabIndex = 0;
 			// 
-			// textPt
+			// textPort
 			// 
-			this.textPt.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.textPt.Location = new System.Drawing.Point(191,114);
-			this.textPt.Margin = new System.Windows.Forms.Padding(4);
-			this.textPt.Name = "textPt";
-			this.textPt.Size = new System.Drawing.Size(64,24);
-			this.textPt.TabIndex = 1;
+			this.textPort.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
+			this.textPort.Location = new System.Drawing.Point(191,102);
+			this.textPort.Margin = new System.Windows.Forms.Padding(4);
+			this.textPort.Name = "textPort";
+			this.textPort.Size = new System.Drawing.Size(64,24);
+			this.textPort.TabIndex = 1;
 			// 
 			// label1
 			// 
@@ -124,22 +125,35 @@
 			// 
 			this.label2.AutoSize = true;
 			this.label2.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.label2.Location = new System.Drawing.Point(149,117);
+			this.label2.Location = new System.Drawing.Point(149,105);
 			this.label2.Margin = new System.Windows.Forms.Padding(4,0,4,0);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(34,17);
 			this.label2.TabIndex = 8;
 			this.label2.Text = "Port";
 			// 
+			// btnConnect
+			// 
+			this.btnConnect.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(0)));
+			this.btnConnect.Location = new System.Drawing.Point(190,131);
+			this.btnConnect.Margin = new System.Windows.Forms.Padding(4);
+			this.btnConnect.Name = "btnConnect";
+			this.btnConnect.Size = new System.Drawing.Size(229,64);
+			this.btnConnect.TabIndex = 9;
+			this.btnConnect.Text = "Connection";
+			this.btnConnect.UseVisualStyleBackColor = true;
+			this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+			// 
 			// FormBegin
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F,16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(607,536);
+			this.ClientSize = new System.Drawing.Size(600,500);
 			this.ControlBox = false;
+			this.Controls.Add(this.btnConnect);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.textPt);
+			this.Controls.Add(this.textPort);
 			this.Controls.Add(this.textIP);
 			this.Controls.Add(this.PWD);
 			this.Controls.Add(this.UID);
@@ -151,7 +165,6 @@
 			this.Name = "FormBegin";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Begin";
-			this.Load += new System.EventHandler(this.FormBegin_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -159,15 +172,16 @@
 
 		#endregion
 
-		private System.Windows.Forms.TextBox textIP;
-		private System.Windows.Forms.TextBox textPt;
 		private System.Windows.Forms.TextBox txtUID;
 		private System.Windows.Forms.TextBox txtPWD;
 		private System.Windows.Forms.Button Login;
 		private System.Windows.Forms.Label UID;
 		private System.Windows.Forms.Label PWD;
+		private System.Windows.Forms.TextBox textIP;
+		private System.Windows.Forms.TextBox textPort;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Button btnConnect;
 	}
 }
 

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ydnet
+namespace golf_net
 {
 	public partial class FormPlay:Form
 	{
@@ -18,7 +18,7 @@ namespace ydnet
 
 		private void Shot_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(PGC.PHASE_RESULT);
+			Program.GetMainForm().ChageForm(APC.PHASE_RESULT);
 		}
 	}
 }

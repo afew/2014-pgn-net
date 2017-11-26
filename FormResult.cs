@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ydnet
+namespace golf_net
 {
 	public partial class FormResult:Form
 	{
@@ -18,17 +18,17 @@ namespace ydnet
 
 		private void btnLobby_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(PGC.PHASE_LOBBY);
+			Program.GetMainForm().ChageForm(APC.PHASE_LOBBY);
 		}
 
 		private void btnReplay_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(PGC.PHASE_PLAY);
+			Program.GetMainForm().ChageForm(APC.PHASE_PLAY);
 		}
 
 		private void btnQuit_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(PGC.PHASE_BEGIN);
+			Program.GetMainForm().ChageForm(APC.PHASE_BEGIN);
 		}
 	}
 }

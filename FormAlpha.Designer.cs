@@ -1,4 +1,4 @@
-﻿namespace ydnet
+﻿namespace golf_net
 {
 	partial class FormAlpha
 	{
@@ -34,7 +34,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F,12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(634,506);
+			this.ClientSize = new System.Drawing.Size(600,500);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormAlpha";

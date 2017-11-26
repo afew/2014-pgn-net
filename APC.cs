@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ydnet
+namespace golf_net
 {
-	static class PGC
+	static class APC
 	{
 		public const int OK			=  0;
 		public const int EFAIL		= -1;

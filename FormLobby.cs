@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ydnet
+namespace golf_net
 {
 	public partial class FormLobby:Form
 	{
@@ -19,7 +19,11 @@ namespace ydnet
 		private void button1_Click(object sender,EventArgs e)
 		{
 			MessageBox.Show("Hello world");
-			Program.GetMainForm().ChageForm(PGC.PHASE_PLAY);
+
+			PGN.TcpCln pNet = Program.GetMainNet ();
+
+
+			Program.GetMainForm().ChageForm(APC.PHASE_PLAY);
 		}
 
 		private void usrLst_SelectedIndexChanged(object sender,EventArgs e)

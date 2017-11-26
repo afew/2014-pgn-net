@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ydnet", "ydnet.csproj", "{47341EB0-C8A4-4BEA-9B4F-E894803C571B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "golf_net", "golf_net.csproj", "{47341EB0-C8A4-4BEA-9B4F-E894803C571B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

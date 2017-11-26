@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ydnet
+namespace golf_net
 {
 	public partial class FormBegin:Form
 	{
@@ -16,22 +16,49 @@ namespace ydnet
 			InitializeComponent();
 			this.txtUID.Text = "User Id";
 			this.txtPWD.Text = "User Password";
+		}
+		
+		
+		private void btnConnect_Click(object sender,EventArgs e)
+		{
+			PGN.TcpCln pNet = Program.GetMainNet ();
 
-			this.textIP.Text = "127.0.0.1";
-			this.textPt.Text = "50000";
+			pNet.OnConnect = OnConnect;
+			pNet.OnRecv    = OnRecv;
+			pNet.Create(null, "192.168.0.7", 20001);
+			pNet.Connect();
 		}
 
 		private void btnLogin_Click(object sender,EventArgs e)
 		{
-			FormAlpha	formAlpha = Program.GetMainForm();
+			//MessageBox.Show("Hello world");
+			Program.GetMainForm().ChageForm(APC.PHASE_LOBBY);
 
-			formAlpha.ChageForm(PGC.PHASE_LOBBY);
+			PGN.TcpCln pNet = Program.GetMainNet ();
+
+			pNet.SendLogin("AAAAAA", "BBBBB");
 		}
 
-		private void FormBegin_Load(object sender,EventArgs e)
+
+		protected void OnConnect()
 		{
-			this.txtUID.Select();
+			PGN.TcpCln pNet = Program.GetMainNet ();
+			PGLog.LOGI("On Connect");
 		}
+
+		protected void OnRecv()
+		{
+			PGLog.LOGI("On Recv");
+			//// game proc....
+			//byte[] b = new byte[20]{;
+
+			//PGN.Packet pck = new PGN.Packet();
+			//pck.Reset();
+
+			//pck.AddData();
+			//NTC.CS_REQ_LOGIN;
+		}
+
 	}
 
 }
