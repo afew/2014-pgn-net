@@ -65,6 +65,8 @@ public partial class TcpApp
 
 			if(NTC.SC_ANS_LOGIN == opp)
 			{
+				byte  user_count = 0;
+
 				app_user_lst.Clear();
 				app_pmap_lst.Clear();
 
@@ -72,9 +74,10 @@ public partial class TcpApp
 				Packet.ValueFromBuf(ref app_user_id  , rcv, idx_bgn + 0);
 				Packet.ValueFromBuf(ref app_char_name, rcv, idx_bgn + 4, 40);
 
+
 				PGLog.LOGI("OnRecv:user id/name::" + app_user_id + ", " + app_char_name);
 
-				byte  user_count = 0;
+
 				Packet.ValueFromBuf(ref user_count   , rcv, idx_bgn + 48);
 
 
@@ -111,6 +114,61 @@ public partial class TcpApp
 				Program.ChageForm(APC.PHASE_LOBBY);
 			}
 
+			else if(NTC.SC_BROADCAST_USERLIST == opp)
+			{
+				byte  user_count = 0;
+
+				idx_bgn = NTC.PCK_HEAD;
+
+				app_user_lst.Clear();
+
+
+				Packet.ValueFromBuf(ref user_count   , rcv, idx_bgn + 0);
+
+
+				idx_bgn = NTC.PCK_HEAD + 1;
+				for(i=0; i<user_count; ++i)
+				{
+					uint	id   = 0;
+					string	name = null;
+					byte	owner= 0;
+					byte	ready= 0;
+
+					Packet.ValueFromBuf(ref id   , rcv, idx_bgn + 46 *i +  0    );
+					Packet.ValueFromBuf(ref name , rcv, idx_bgn + 46 *i +  4, 40);
+					Packet.ValueFromBuf(ref owner, rcv, idx_bgn + 46 *i + 44    );
+					Packet.ValueFromBuf(ref ready, rcv, idx_bgn + 46 *i + 45    );
+
+					TuserInfo usr = new TuserInfo(id, name, owner, ready);
+					app_user_lst.Add(usr);
+					PGLog.LOGI("OnRecv:NTC.SC_ANS_LOGIN:: id/name::" + id + ", " + name);
+				}
+
+
+				Program.ChageUserList(0);
+			}
+
+			else if(NTC.SC_BROADCAST_LOGOUT == opp)
+			{
+				uint	id   = 0;
+
+				idx_bgn = NTC.PCK_HEAD;
+
+				Packet.ValueFromBuf(ref id, rcv, idx_bgn + 0);
+
+
+				for(i=0; i<app_user_lst.Count; ++i)
+				{
+					if(app_user_lst[i].id == id)
+					{
+						app_user_lst.RemoveAt(i);
+						break;
+					}
+				}
+
+				Program.ChageUserList(0);
+			}
+			
 			else if(NTC.CS_REQ_BROADCAST == opp)
 			{
 				//
@@ -138,7 +196,7 @@ public partial class TcpApp
 						string log = "OnRecv:NTC.GP_INVITE:: sender:" + sendId + ", dest id::" + destId;
 						PGLog.LOGI(log);
 						DialogResult r =
-						MessageBox.Show("한판 뜰래?", "Invited", MessageBoxButtons.YesNo);
+						MessageBox.Show("한판 뜰래?", "Msg", MessageBoxButtons.YesNo);
 
 						if(DialogResult.No == r)
 							inviteRps = NTC.RST_NO;
@@ -150,21 +208,20 @@ public partial class TcpApp
 				// 초대 응답
 				else if(NTC.GP_RS_INVITE   == gpp)
 				{
+					byte rq = 0;
 					Packet.ValueFromBuf(ref sendId, rcv, idx_bgn + 2);
 					Packet.ValueFromBuf(ref destId, rcv, idx_bgn + 2 + 4);
+					Packet.ValueFromBuf(ref     rq, rcv, idx_bgn + 2 + 4 + 4);
 
 					if(TcpApp.app_user_id == destId)
 					{
-						int inviteRps = NTC.RST_OK;
-						string log = "OnRecv:NTC.GP_INVITE:: sender:" + sendId + ", dest id::" + destId;
+						string log = "OnRecv:NTC.GP_RS_INVITE:: sender:" + sendId + ", dest id::" + destId +"::"+rq;
 						PGLog.LOGI(log);
-						DialogResult r =
-						MessageBox.Show("한판 뜰래?", "Invited", MessageBoxButtons.YesNo);
 
-						if(DialogResult.No == r)
-							inviteRps = NTC.RST_NO;
-
-						TcpApp.SendRsInvite(sendId, (byte)inviteRps);
+						if(rq == NTC.RST_OK)
+							MessageBox.Show("Inviting success", "Msg", MessageBoxButtons.OK);
+						else
+							MessageBox.Show("Inviting failed", "Msg", MessageBoxButtons.OK);
 					}
 				}
 

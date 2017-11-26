@@ -16,10 +16,10 @@ namespace golf_net
 	{
 		public int			m_phase   = APC.PHASE_BEGIN;
 		public List<Form>	m_form    = new List<Form>();
-		FormBegin				formBegin = new FormBegin();
-		FormLobby				formLobby = new FormLobby();
-		FormPlay				formPlay  = new FormPlay();
-		FormResult				formResult= new FormResult();
+		public FormBegin	formBegin = new FormBegin();
+		public FormLobby	formLobby = new FormLobby();
+		public FormPlay		formPlay  = new FormPlay();
+		public FormResult	formResult= new FormResult();
 
 		public FormAlpha()
 		{

@@ -57,7 +57,6 @@
 			this.listUsr.Name = "listUsr";
 			this.listUsr.Size = new System.Drawing.Size(252, 468);
 			this.listUsr.TabIndex = 0;
-			this.listUsr.SelectedIndexChanged += new System.EventHandler(this.usrLst_SelectedIndexChanged);
 			// 
 			// listMap
 			// 

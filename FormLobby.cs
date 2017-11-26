@@ -30,12 +30,14 @@ namespace golf_net
 			TcpApp.SendRqInvite(usrInfo.id, (uint)idx_map);
 		}
 
-		private void usrLst_SelectedIndexChanged(object sender,EventArgs e)
+		protected override void OnVisibleChanged(EventArgs e)
 		{
+			ChageUserList(0);
 
+			base.OnVisibleChanged(e);
 		}
 
-		protected override void OnVisibleChanged(EventArgs e)
+		public void ChageUserList(int n)
 		{
 			int i=0;
 			List<TuserInfo> usr_lst = TcpApp.app_user_lst;
@@ -62,8 +64,6 @@ namespace golf_net
 
 			if(0< this.listUsr.Items.Count) this.listUsr.SelectedIndex = 0;
 			if(0< this.listMap.Items.Count) this.listMap.SelectedIndex = 0;
-
-			base.OnVisibleChanged(e);
 		}
 	}
 }

@@ -46,7 +46,8 @@ public class TplayMap
 public partial class TcpApp
 {
 	//public static string	net_ip		= "192.168.0.7";
-	public static string	net_ip		= "192.168.0.74";
+	//public static string	net_ip		= "192.168.0.74";
+	public static string	net_ip		= "192.168.0.20";
 	public static string	net_pt		= "20001";
 	public static string	net_uid		= "AAAAA";
 	public static string	net_pwd		= "BBBBB";

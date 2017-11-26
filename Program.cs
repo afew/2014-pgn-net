@@ -50,4 +50,19 @@ namespace golf_net
 
 			return APC.OK;
 		}
+
+
+		static public int ChageUserList(int n)
+		{
+			if(m_formAlpha.InvokeRequired)
+			{
+				m_formAlpha.Invoke(new Tinvoke(ChageUserList), n);
+			}
+			else
+			{
+				m_formAlpha.formLobby.ChageUserList(n);
+			}
+
+			return APC.OK;
+		}
 	}}
