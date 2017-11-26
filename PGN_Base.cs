@@ -75,9 +75,9 @@ namespace PGN
 	public class Packet
 	{
 		// atrribute
-		protected ushort	m_len = 0;								// total length
-		protected ushort	m_opp = 0;								// op code
-		protected byte[]	m_buf = new byte[NTC.PCK_MAX];			// buffer = Header + Payload
+		protected ushort	m_len = 0;											// total length
+		protected ushort	m_opp = 0;											// op code
+		protected byte[]	m_buf = new byte[NTC.PCK_MAX];						// buffer = Header + Payload
 
 		public	ushort		Len	{ get{ return m_len;} set{m_len = value; byte[] b=BitConverter.GetBytes(m_len); Array.Copy(b,0, m_buf, 0, 2); }}
 		public	ushort		Opp	{ get{ return m_opp;} set{m_opp = value; byte[] b=BitConverter.GetBytes(m_opp); Array.Copy(b,0, m_buf, 2, 2); }}
@@ -91,44 +91,21 @@ namespace PGN
 			}
 		}
 
-		public Packet()
-		{
-			this.Reset();
-		}
-
-		public Packet(ref byte[] s, int l)
-		{
-			this.Reset();
-			SetupFrom(ref s, l);
-		}
-
-		// Methods
-		public void Reset()
-		{
-			Array.Clear(m_buf, 0, m_buf.Length);
-			m_len = 0; m_opp = 0;
-		}
-
-		// byte array
-		public void	AddData(byte[] v, int l)
-		{
-			Array.Copy(v, 0, m_buf, NTC.PCK_HEAD + m_len, l);
-			m_len += (ushort)l;
-		}
+		public Packet()                     { this.Reset(); }
+		public Packet(ref byte[] s, int l)  { this.Reset(); SetupFrom(ref s, l); }
+		public void Reset()                 { Array.Clear(m_buf, 0, m_buf.Length); m_len = 0; m_opp = 0; }
 
 		// add the data to the payload
-		public void	AddData(float v ){ byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
-		public void	AddData(double v){ byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
-		public void	AddData(int v   ){ byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
-		public void	AddData(short v ){ byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
-		public void	AddData(byte v  )
+		public void	AddData(byte[] v, int l){ Array.Copy(v, 0, m_buf, NTC.PCK_HEAD + m_len, l); m_len += (ushort)l; }
+		public void	AddData(byte   v)       { m_buf[NTC.PCK_HEAD + m_len] = v; m_len += 1;                    }
+		public void	AddData(float  v)       { byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
+		public void	AddData(double v)       { byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
+		public void	AddData(int    v)       { byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
+		public void	AddData(short  v)       { byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
+		public void	AddData(uint   v)       { byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
+		public void	AddData(ushort v)       { byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
+		public void	AddData(string v)
 		{
-			m_buf[NTC.PCK_HEAD + m_len] = v;
-			m_len += 1;
-		}
-		public void	AddData(uint v  ){ byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
-		public void	AddData(ushort v){ byte[] b = BitConverter.GetBytes(v); this.AddData(b, b.Length); }
-		public void	AddData(string v){
 			int l = v.Length;
 			for(int n=0; n< l; ++n) {	m_buf[m_len + n] = (byte)v[n]; }
 			m_len += (ushort)l;
@@ -140,11 +117,12 @@ namespace PGN
 			m_opp = _opp;
 			byte[] cLen = BitConverter.GetBytes(m_len);
 			byte[] cOpp = BitConverter.GetBytes(m_opp);
-
-			Array.Copy(cLen, 0, m_buf,  0, 2);	// len 2: packet length
-			Array.Copy(cOpp, 0, m_buf,  2, 2);	// opp 2: operation protocol
+			Array.Copy(cLen, 0, m_buf,  0, 2);									// len 2: packet length
+			Array.Copy(cOpp, 0, m_buf,  2, 2);									// opp 2: operation protocol
 		}
 
+
+		// copy
 		public void CopyFrom(ref byte[] src, int offset, int srcIdx, int l)
 		{
 			Array.Copy(src, srcIdx, m_buf, offset, l);
@@ -192,28 +170,24 @@ namespace PGN
 			return lenD;
 		}
 
-		public static uint GetSocketId(ref System.Net.Sockets.Socket scH)
-		{
-			return (uint)scH.Handle.ToInt32();
-		}
+		public static uint   SocketId(ref Socket scH) { return (uint)scH.Handle.ToInt32(); }
 
 		public static ushort LenFromBuf(byte[] b){ ushort v = BitConverter.ToUInt16(b, 0); return v;}
 		public static ushort OppFromBuf(byte[] b){ ushort v = BitConverter.ToUInt16(b, 2); return v;}
-		public static void   ValueFromBuf(ref byte   _r, byte[] b, int offset){ _r=b[offset];}
-		public static void   ValueFromBuf(ref double _r, byte[] b, int offset){ _r=BitConverter.ToDouble(b, offset);}
-		public static void   ValueFromBuf(ref short  _r, byte[] b, int offset){ _r=BitConverter.ToInt16 (b, offset);}
-		public static void   ValueFromBuf(ref int    _r, byte[] b, int offset){ _r=BitConverter.ToInt32 (b, offset);}
-		public static void   ValueFromBuf(ref float  _r, byte[] b, int offset){ _r=BitConverter.ToSingle(b, offset);}
-		public static void   ValueFromBuf(ref ushort _r, byte[] b, int offset){ _r=BitConverter.ToUInt16(b, offset);}
-		public static void   ValueFromBuf(ref uint   _r, byte[] b, int offset){ _r=BitConverter.ToUInt32(b, offset);}
-		public static void   ValueFromBuf(ref string _r, byte[] b, int offset, int cnt)
+		public static void   ValFromBuf(ref byte   _r, byte[] b, int offset){ _r=b[offset];                       }
+		public static void   ValFromBuf(ref double _r, byte[] b, int offset){ _r=BitConverter.ToDouble(b, offset);}
+		public static void   ValFromBuf(ref short  _r, byte[] b, int offset){ _r=BitConverter.ToInt16 (b, offset);}
+		public static void   ValFromBuf(ref int    _r, byte[] b, int offset){ _r=BitConverter.ToInt32 (b, offset);}
+		public static void   ValFromBuf(ref float  _r, byte[] b, int offset){ _r=BitConverter.ToSingle(b, offset);}
+		public static void   ValFromBuf(ref ushort _r, byte[] b, int offset){ _r=BitConverter.ToUInt16(b, offset);}
+		public static void   ValFromBuf(ref uint   _r, byte[] b, int offset){ _r=BitConverter.ToUInt32(b, offset);}
+		public static void   ValFromBuf(ref string _r, byte[] b, int offset, int cnt)
 		{
-			// find the null character
 			ushort len = 0;
-			for(;len<20; ++len)
+			for(;len<NTC.MAX_NAME; ++len)						// find the null character
 			{
 				ushort v = 0;
-				Packet.ValueFromBuf(ref v, b, offset + len*2);
+				Packet.ValFromBuf(ref v, b, offset + len*2);	// read 2byte
 				if(0 == v)
 					break;
 			}
@@ -224,10 +198,17 @@ namespace PGN
 
 
 	////////////////////////////////////////////////////////////////////////////
-	// Tcp base
+	// function pointer
 
-	public delegate void PGN_Fnc(int ev, int hr, object socket 	// close/accept/connect/send/recv callback event.
-								,int len, object data        );	// event, hr  = err?, socket, receive length, buffer or object
+	public delegate int Fnc_Int   (int v);
+	public delegate int Fnc_Obj   (object v);
+	public delegate int Fnc_IntObj(int r, object v);
+	public delegate int Fnc_Event (int ev , int hr, object socket 				// close/accept/connect/send/recv callback event.
+								  ,int len, object data        );				// event, hr  = err?, socket, receive length, buffer or object
+
+
+	////////////////////////////////////////////////////////////////////////////
+	// Tcp base
 
 	public abstract class TcpBase
 	{
@@ -242,12 +223,12 @@ namespace PGN
 		protected string		m_sIp	= "";									// default ip
 		protected int			m_sPt	= 0;									// default port
 
-		protected PGN_Fnc		IoEvent	= IoDefEvent;							// Io event for user defined function
+		protected Fnc_Event		IoEvnt	= IoDef;								// Io event for user defined function
 
 		abstract public void	Destroy();
 		virtual  public int		Query(string s, object v){	return PGN.NTC.EFAIL; }
 		virtual  public Socket	GetSocket()              {	return m_scH;         }
-		         public void	SetIoEvent(PGN_Fnc     v){	IoEvent = v;          }
+		         public void	SetIoEvent(Fnc_Event   v){	IoEvnt = v;           }
 
 		public uint				NetId
 		{
@@ -256,17 +237,19 @@ namespace PGN
 		}
 
 
-		public static void IoDefEvent(int ev, int hr, object socket, int len, object data)
+		public static int IoDef(int ev, int hr, object socket, int len, object data)
 		{
 			switch(ev)
 			{
-				case NTC.EV_CLOSE	: PGLog.LOGI("IoDefEvent: Close");		break;
-				case NTC.EV_ACCEPT	: PGLog.LOGI("IoDefEvent: Accept");		break;
-				case NTC.EV_CONNECT	: PGLog.LOGI("IoDefEvent: Connect");	break;
-				case NTC.EV_SEND	: PGLog.LOGI("IoDefEvent: Send");		break;
-				case NTC.EV_RECV	: PGLog.LOGI("IoDefEvent: Receive");	break;
-				default: PGLog.LOGI("IoDefEvent: Not defined");				break;
+				case NTC.EV_CLOSE	: PGLog.LOGI("IoDef: Close");	break;
+				case NTC.EV_ACCEPT	: PGLog.LOGI("IoDef: Accept");	break;
+				case NTC.EV_CONNECT	: PGLog.LOGI("IoDef: Connect");	break;
+				case NTC.EV_SEND	: PGLog.LOGI("IoDef: Send");	break;
+				case NTC.EV_RECV	: PGLog.LOGI("IoDef: Receive");	break;
+				default: PGLog.LOGI("IoDef: Not defined");			break;
 			}
+
+			return NTC.OK;
 		}
 	}
 

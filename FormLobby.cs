@@ -21,23 +21,23 @@ namespace golf_net
 
 		private void btnStart_Click(object sender,EventArgs e)
 		{
-			int idx_usr = this.listMap.SelectedIndex;
+			int idx_usr = this.listUsr.SelectedIndex;
 			int idx_map = this.listMap.SelectedIndex;
-
 
 			TuserInfo usrInfo = TcpApp.app_user_lst[idx_usr];
 
-			TcpApp.SendRqInvite(usrInfo.id, (uint)idx_map);
+			if(usrInfo.id != TcpApp.app_user_id)
+				TcpApp.SendRqInvite(usrInfo.id, (uint)idx_map);
 		}
 
 		protected override void OnVisibleChanged(EventArgs e)
 		{
-			ChageUserList(0);
+			ChangeLobbyUserList(0);
 
 			base.OnVisibleChanged(e);
 		}
 
-		public void ChageUserList(int n)
+		public void ChangeLobbyUserList(int n)
 		{
 			int i=0;
 			List<TuserInfo> usr_lst = TcpApp.app_user_lst;
@@ -64,6 +64,12 @@ namespace golf_net
 
 			if(0< this.listUsr.Items.Count) this.listUsr.SelectedIndex = 0;
 			if(0< this.listMap.Items.Count) this.listMap.SelectedIndex = 0;
+		}
+
+		private void btnDiscon_Click(object sender,EventArgs e)
+		{
+			TcpApp.SendDisConnect();
+			Program.ChageForm(APC.PHASE_BEGIN);				
 		}
 	}
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 using System.Net;
 using System.Net.Sockets;
@@ -20,7 +21,7 @@ namespace PGN
 		protected	int				m_rcvN	= 0;								// current received count
 
 		protected	List<byte[]>	m_sndB	= new List<byte[]>();				// send queue buffer
-		protected	int				m_sndC	= NTC.OK;							// sending condition complete?
+		protected	int				m_sndC	= NTC.OK;							// sending condition complete or op?
 		protected	int				m_sndN	= -1;								// current send index
 
 		protected	uint			m_nSqc	= 0;								// packet sequence
@@ -117,6 +118,7 @@ namespace PGN
 
 				m_sndC	= NTC.OK;
 				m_sndN	= -1;
+
 				for(int n=0; n<m_sndB.Count; ++n) { Array.Clear(m_sndB[n], 0, m_sndB[n].Length); }
 
 			}
@@ -150,36 +152,78 @@ namespace PGN
 			{
 				PGLog.LOGW("IoConnect::SocketException::" + e0.ToString() );
 				hr = NTC.EFAIL_SOCK;
-				goto ERR;
+				goto END;
 			}
 			catch(Exception e1)
 			{
 				PGLog.LOGW("IoConnect::Exception::" + e1.ToString() );
 				hr = NTC.EFAIL;
-				goto ERR;
+				goto END;
 			}
 
 			if(pCln != this)
 			{
 				PGLog.LOGW("IoConnect::Different object");
 				hr = NTC.EFAIL;
-				goto ERR;
+				goto END;
 			}
 
 
 			lock(m_oLock)
 			{
 				PGLog.LOGW("IoConnect::Success");
-				IoEvent(NTC.EV_CONNECT, NTC.OK, pCln.m_scH, 0, this);
+				IoEvnt(NTC.EV_CONNECT, NTC.OK, pCln.m_scH, 0, this);
 			}
 
 			pCln.Recv();
 			return;
 
-			ERR:
+			END:
 			lock(m_oLock)
 			{
-				IoEvent(NTC.EV_CONNECT, hr, pCln.m_scH, 0, this);
+				IoEvnt(NTC.EV_CONNECT, hr, pCln.m_scH, 0, this);
+			}
+		}
+
+		protected void IoSend(IAsyncResult iar)
+		{
+			int		hr   = NTC.OK;
+			TcpCln	pCln = (TcpCln)iar.AsyncState;
+			int		sent = -1;
+			int		sentO= m_sndC;
+
+			try
+			{
+				sent = pCln.m_scH.EndSend(iar);
+			}
+			catch(SocketException e0)
+			{
+				PGLog.LOGW("IoSend::SocketException::" + e0.ToString() );
+				hr = NTC.EFAIL_SOCK;
+				goto END;
+			}
+			catch(Exception e1)
+			{
+				PGLog.LOGW("IoSend::Exception::" + e1.ToString() );
+				hr = NTC.EFAIL;
+				goto END;
+			}
+
+			if(pCln != this)
+			{
+				PGLog.LOGW("IoSend::Different object");
+				hr = NTC.EFAIL;
+				goto END;
+			}
+
+			PGLog.LOGI("IoSend::Success::Sending byte::" + sent);
+
+
+			END:
+			lock(m_oLock)
+			{
+				m_sndC = NTC.OK;
+				IoEvnt(NTC.EV_SEND, hr, pCln.m_scH, sentO, this);
 			}
 		}
 
@@ -187,6 +231,7 @@ namespace PGN
 		protected void IoRecv(IAsyncResult iar)
 		{
 			int		hr   = NTC.OK;
+			int		io   = NTC.EV_RECV;
 			TcpCln	pCln = (TcpCln)iar.AsyncState;
 			int		rcn = -1;
 
@@ -198,95 +243,42 @@ namespace PGN
 			{
 				PGLog.LOGW("IoRecv::SocketException::" + e0.ToString() );
 				hr = NTC.EFAIL_SOCK;
-				goto ERR;
+				goto END;
 			}
 			catch(Exception e1)
 			{
 				PGLog.LOGW("IoRecv::Exception::" + e1.ToString() );
 				hr = NTC.EFAIL;
-				goto ERR;
+				goto END;
 			}
 
 			if(pCln != this)
 			{
 				PGLog.LOGW("IoRecv::Different object");
 				hr = NTC.EFAIL;
-				goto ERR;
+				goto END;
 			}
 
 			// closed socket
-			if(-1 == rcn || 0 == rcn)
+			if(0 >= rcn)
 			{
-				PGLog.LOGW("IoRecv::disconnected");
+				PGLog.LOGW("IoRecv::force disconnected from server ----------");
 
-				lock(m_oLock)
-				{
-					IoEvent(NTC.EV_CLOSE, NTC.OK, pCln.m_scH, 0, this);
-				}
-				CloseSocket();
-				return;
+				io   = NTC.EV_CLOSE;
+				goto END;
 			}
 
-			lock(m_oLock)
-			{
-				PGLog.LOGW("IoRecv::Received size:" + rcn);
-				IoEvent(NTC.EV_RECV, NTC.OK, pCln.m_scH, rcn, m_rcvS);
-			}
+			PGLog.LOGW("IoRecv::Received size:" + rcn);
+			lock(m_oLock) { IoEvnt(NTC.EV_RECV, NTC.OK, pCln.m_scH, rcn, m_rcvS); }
 
 			pCln.Recv();
 			return;
 
-			ERR:
-			lock(m_oLock)
-			{
-				IoEvent(NTC.EV_RECV, hr, pCln.m_scH, 0, this);
-			}
+			END:
+			lock(m_oLock) { IoEvnt(io, hr, pCln.m_scH, 0, this); }
+			CloseSocket();
 		}
 
-		protected void IoSend(IAsyncResult iar)
-		{
-			int		hr   = NTC.OK;
-			TcpCln	pCln = (TcpCln)iar.AsyncState;
-			int		sent = -1;
-
-			try
-			{
-				sent = pCln.m_scH.EndSend(iar);
-			}
-			catch(SocketException e0)
-			{
-				PGLog.LOGW("IoSend::SocketException::" + e0.ToString() );
-				hr = NTC.EFAIL_SOCK;
-				goto ERR;
-			}
-			catch(Exception e1)
-			{
-				PGLog.LOGW("IoSend::Exception::" + e1.ToString() );
-				hr = NTC.EFAIL;
-				goto ERR;
-			}
-
-			if(pCln != this)
-			{
-				PGLog.LOGW("IoSend::Different object");
-				hr = NTC.EFAIL;
-				goto ERR;
-			}
-
-			PGLog.LOGI("IoSend::Success::Sending byte::" + sent);
-			lock (m_oLock)
-			{
-				m_sndC = NTC.OK;
-				IoEvent(NTC.EV_SEND, hr, pCln.m_scH, 0, this);
-			}
-			return;
-
-			ERR:
-			lock(m_oLock)
-			{
-				IoEvent(NTC.EV_SEND, hr, pCln.m_scH, 0, this);
-			}
-		}
 
 		////////////////////////////////////////////////////////////////////////////
 		// Interface ...
@@ -320,7 +312,8 @@ namespace PGN
 				byte[] buf = m_sndB[m_sndN];
 				nSnd = PGN.Packet.EnCrypt(ref buf, ref nSnd, s, l);
 
-				m_sndC = NTC.WAIT;
+				m_sndC = op;//NTC.WAIT;
+
 				m_scH.BeginSend(buf, 0, nSnd, SocketFlags.None, IoSend, this);
 			}
 
@@ -345,7 +338,8 @@ namespace PGN
 				buf = m_sndB[m_sndN];
 				snd = pck.EnCrypt(ref buf);
 
-				m_sndC = NTC.WAIT;
+				m_sndC = pck.Opp;//NTC.WAIT;
+
 				m_scH.BeginSend(buf, 0, snd, SocketFlags.None, IoSend, this);
 			}
 

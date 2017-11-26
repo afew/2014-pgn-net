@@ -31,6 +31,7 @@ namespace PGN
 		public const int MAX_CONNECT				= 3600				;		// Max connection
 		public const int PGN_CLIENT					= 0					;		// Net app type: client
 		public const int PGN_SERVER					= 1					;		// Net app type: server
+		public const int MAX_NAME					= 20				;		// Max Character Name(2byte)
 
 		// IO event for delegate function accept, send receive
 		public const int EV_CLOSE					= 1					;		// closed event
@@ -73,15 +74,15 @@ namespace PGN
 		public const byte	RST_NO					= 2					;		// snd/rcv: no
 
 		// Game play Protocol
-		public const ushort	GP_DEFAULT				= 0					;		// Default
-		public const ushort	GP_CHAT					= GP_DEFAULT + 2	;		// Chatting
-		public const ushort	GP_RQ_INVITE			= GP_DEFAULT + 3	;		// Request Invite
-		public const ushort	GP_RS_INVITE			= GP_DEFAULT + 4	;		// Response Invite
-		public const ushort	GP_SHOT					= GP_DEFAULT + 5	;		// Shot
-		public const ushort	GP_PUTT					= GP_DEFAULT + 6	;		// Putting
-		public const ushort	GP_MOVESTOP				= GP_DEFAULT + 7	;		// Moving stop
-		public const ushort	GP_END					= GP_DEFAULT + 8	;		// End Play
-		public const ushort	GP_RESULT				= GP_DEFAULT + 9	;		// Result
+		public const ushort	GP_DEFAULT				= 1					;		// Default
+		public const ushort	GP_CHAT					= GP_DEFAULT + 1	;		// Chatting
+		public const ushort	GP_RQ_INVITE			= GP_DEFAULT + 2	;		// Request Invite
+		public const ushort	GP_RS_INVITE			= GP_DEFAULT + 3	;		// Response Invite
+		public const ushort	GP_PLAY_SHOT			= GP_DEFAULT + 4	;		// Shot
+		public const ushort	GP_PLAY_PUTT			= GP_DEFAULT + 5	;		// Putting
+		public const ushort	GP_PLAY_BPOS			= GP_DEFAULT + 6	;		// Ball Stop position
+		public const ushort	GP_PLAY_END				= GP_DEFAULT + 7	;		// End
+		public const ushort GP_HEARTBEAT            = GP_DEFAULT + 8    ;       // Network Heartbeat.
 	}
 }
 

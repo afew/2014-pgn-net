@@ -11,7 +11,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-using golf_net;
 using PGN;
 
 
@@ -23,7 +22,6 @@ public partial class TcpApp
 
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
-
 		int     pt = Convert.ToInt32(_pt);
 	
 		pNet.SetIoEvent(OnIoEvent);
@@ -32,6 +30,16 @@ public partial class TcpApp
 		hr = pNet.Create(null, _ip, pt);
 		hr = pNet.Connect();
 		return hr;
+	}
+
+
+	public static int SendDisConnect()											// Connection
+	{
+		TcpCln	pNet = TcpApp.GetMainNet();
+	
+		pNet.SetIoEvent(OnIoEvent);
+		pNet.CloseSocket();
+		return NTC.OK;
 	}
 
 
@@ -54,12 +62,20 @@ public partial class TcpApp
 		return hr;
 	}
 
+	public static int SendLogout()
+	{
+		TcpCln	pNet = TcpApp.GetMainNet();
+		return NTC.OK;
+	}
+
 	//
 	// GAME PLAY PACKET: gpp + send id + {dest id} + data
 	//
 
 	public static int SendRqInvite(uint destId, uint idx_map)
 	{
+		PGLog.LOGI("TcpApp::SendRqInvite");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
@@ -79,6 +95,8 @@ public partial class TcpApp
 
 	public static int SendRsInvite(uint destId, byte rq)
 	{
+		PGLog.LOGI("TcpApp::SendRsInvite");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
@@ -96,76 +114,80 @@ public partial class TcpApp
 		return hr;
 	}
 
-	public static int SendGpShot( float posX, float posY, float posZ
-								, float  dir
-								, float ctpX, float ctpY
-								, uint  club, float power, float best)
+	public static int SendGpShot(TplayInfo shot)
 	{
+		PGLog.LOGI("TcpApp::SendGpShot");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
 		ushort opp = NTC.CS_REQ_BROADCAST;										// op protocol
-		ushort gpp = NTC.GP_SHOT;												// game play protocol
+		ushort gpp = NTC.GP_PLAY_SHOT;											// game play protocol
 
 		m_wrkPck.Reset();
 		m_wrkPck.AddData(gpp);
 		m_wrkPck.AddData(TcpApp.app_user_id);
-		m_wrkPck.AddData(posX);
-		m_wrkPck.AddData(posY);
-		m_wrkPck.AddData(posZ);
-		m_wrkPck.AddData(dir);
-		m_wrkPck.AddData(ctpX);
-		m_wrkPck.AddData(ctpY);
-		m_wrkPck.AddData(club);
-		m_wrkPck.AddData(power);
-		m_wrkPck.AddData(best);
+		m_wrkPck.AddData(TcpApp.app_oppo_id);
+		m_wrkPck.AddData(shot.x);
+		m_wrkPck.AddData(shot.y);
+		m_wrkPck.AddData(shot.z);
+		m_wrkPck.AddData(shot.d);
+		m_wrkPck.AddData(shot.c_x);
+		m_wrkPck.AddData(shot.c_y);
+		m_wrkPck.AddData(shot.club);
+		m_wrkPck.AddData(shot.pow);
+		m_wrkPck.AddData(shot.best);
+		m_wrkPck.AddData(shot.stroke);
 		m_wrkPck.EnCode(opp);
 
 		hr = pNet.Send(m_wrkPck);
 		return hr;
 	}
 
-	public static int SendGpPutt( float posX, float posY, float posZ
-								, float  dir
-								, float ctpY
-								, uint  club, float pow)
+	public static int SendGpPutt(TplayInfo putt)
 	{
+		PGLog.LOGI("TcpApp::SendGpPutt");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
 		ushort opp = NTC.CS_REQ_BROADCAST;										// op protocol
-		ushort gpp = NTC.GP_PUTT;												// game play protocol
+		ushort gpp = NTC.GP_PLAY_PUTT;											// game play protocol
 
 		m_wrkPck.Reset();
 		m_wrkPck.AddData(gpp);
 		m_wrkPck.AddData(TcpApp.app_user_id);
-		m_wrkPck.AddData(posX);
-		m_wrkPck.AddData(posY);
-		m_wrkPck.AddData(posZ);
-		m_wrkPck.AddData(dir);
-		m_wrkPck.AddData(ctpY);
-		m_wrkPck.AddData(club);
-		m_wrkPck.AddData(pow);
+		m_wrkPck.AddData(TcpApp.app_oppo_id);
+		m_wrkPck.AddData(putt.x);
+		m_wrkPck.AddData(putt.y);
+		m_wrkPck.AddData(putt.z);
+		m_wrkPck.AddData(putt.z);
+		m_wrkPck.AddData(putt.c_y);
+		m_wrkPck.AddData(putt.club);
+		m_wrkPck.AddData(putt.pow);
 		m_wrkPck.EnCode(opp);
 
 		hr = pNet.Send(m_wrkPck);
 		return hr;
 	}
 
-	public static int SendGpMoveStop( float posX, float posY, float posZ)
+	public static int SendGpBallPos(float x, float y, float z)
 	{
+		PGLog.LOGI("TcpApp::SendGpBallPos");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
 		ushort opp = NTC.CS_REQ_BROADCAST;										// op protocol
-		ushort gpp = NTC.GP_MOVESTOP;											// game play protocol
+		ushort gpp = NTC.GP_PLAY_BPOS;											// game play protocol
 
 		m_wrkPck.Reset();
 		m_wrkPck.AddData(gpp);
 		m_wrkPck.AddData(TcpApp.app_user_id);
-		m_wrkPck.AddData(posX);
-		m_wrkPck.AddData(posY);
-		m_wrkPck.AddData(posZ);
+		m_wrkPck.AddData(TcpApp.app_oppo_id);
+		m_wrkPck.AddData(x);
+		m_wrkPck.AddData(y);
+		m_wrkPck.AddData(z);
 		m_wrkPck.EnCode(opp);
 
 		hr = pNet.Send(m_wrkPck);
@@ -173,34 +195,45 @@ public partial class TcpApp
 	}
 
 
-	public static int SendGpEnd()
+	public static int SendGpEnd(TplayInfo end)
 	{
+		PGLog.LOGI("TcpApp::SendGpEnd");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
 		ushort opp = NTC.CS_REQ_BROADCAST;										// op protocol
-		ushort gpp = NTC.GP_END;												// game play protocol
+		ushort gpp = NTC.GP_PLAY_END;											// game play protocol
 
 		m_wrkPck.Reset();
 		m_wrkPck.AddData(gpp);
 		m_wrkPck.AddData(TcpApp.app_user_id);
+		m_wrkPck.AddData(TcpApp.app_oppo_id);
+		m_wrkPck.AddData(end.x);
+		m_wrkPck.AddData(end.y);
+		m_wrkPck.AddData(end.z);
+		m_wrkPck.AddData(end.stroke);
+		m_wrkPck.AddData(end.bonus);
 		m_wrkPck.EnCode(opp);
 
 		hr = pNet.Send(m_wrkPck);
 		return hr;
 	}
 
-	public static int SendGpResult()
+	public static int SendHeartbeat()
 	{
-		TcpCln	pNet = TcpApp.GetMainNet();
-		int		hr = 0;
+		PGLog.LOGI("TcpApp::SendHeartbeat");
 
-		ushort opp = NTC.CS_REQ_BROADCAST;										// op protocol
-		ushort gpp = NTC.GP_RESULT;												// game play protocol
+		TcpCln pNet = TcpApp.GetMainNet();
+		int hr = 0;
+
+		ushort opp = NTC.CS_REQ_BROADCAST;
+		ushort gpp = NTC.GP_HEARTBEAT;
 
 		m_wrkPck.Reset();
 		m_wrkPck.AddData(gpp);
-		m_wrkPck.AddData(TcpApp.app_user_id);
+		int iData = 777;
+		m_wrkPck.AddData(iData);
 		m_wrkPck.EnCode(opp);
 
 		hr = pNet.Send(m_wrkPck);
@@ -210,6 +243,8 @@ public partial class TcpApp
 
 	public static int SendReady(byte bReady)
 	{
+		PGLog.LOGI("TcpApp::SendReady");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
@@ -225,20 +260,24 @@ public partial class TcpApp
 
 	public static int SendGo()
 	{
-		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 
-		ushort opp = NTC.CS_REQ_GO;
+		PGLog.LOGI("TcpApp::SendGo");
 
-		m_wrkPck.Reset();
-		m_wrkPck.EnCode(opp);
+		//TcpCln	pNet = TcpApp.GetMainNet();
+		//ushort opp = NTC.CS_REQ_GO;
 
-		hr = pNet.Send(m_wrkPck);
+		//m_wrkPck.Reset();
+		//m_wrkPck.EnCode(opp);
+
+		//hr = pNet.Send(m_wrkPck);
 		return hr;
 	}
 
 	public static int SendStop()
 	{
+		PGLog.LOGI("TcpApp::SendStop");
+
 		TcpCln	pNet = TcpApp.GetMainNet();
 		int		hr = 0;
 

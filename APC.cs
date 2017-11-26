@@ -17,10 +17,10 @@ namespace golf_net
 		public const int TRUE		=  1;
 		public const int OK_AL		=  1;
 
-		public const int PHASE_BEGIN	= 0;
-		public const int PHASE_LOBBY	= PHASE_BEGIN + 1;
-		public const int PHASE_PLAY		= PHASE_BEGIN + 2;
-		public const int PHASE_RESULT	= PHASE_BEGIN + 3;
-		public const int PHASE_MAX		= PHASE_BEGIN + 4;
+		public const int PHASE_BEGIN = 0;
+		public const int PHASE_LOBBY = PHASE_BEGIN + 1;
+		public const int PHASE_PLAY  = PHASE_BEGIN + 2;
+		public const int PHASE_RST	 = PHASE_BEGIN + 3;
+		public const int PHASE_MAX   = PHASE_BEGIN + 4;
 	}
 }

@@ -67,6 +67,12 @@
     <Compile Include="FormBegin.Designer.cs">
       <DependentUpon>FormBegin.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormMsgBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMsgBox.Designer.cs">
+      <DependentUpon>FormMsgBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="PGN_Base.cs" />
     <Compile Include="PGN_Const.cs" />
     <Compile Include="PGN_TcpApp.cs" />
@@ -111,6 +117,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormResult.resx">
       <DependentUpon>FormResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMsgBox.resx">
+      <DependentUpon>FormMsgBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

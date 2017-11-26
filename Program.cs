@@ -7,9 +7,6 @@ namespace golf_net
 {
 	public static class Program
 	{
-		delegate int Tinvoke(int idx);
-
-
 		public static FormAlpha		m_formAlpha = null;
 
 		/// <summary>
@@ -28,6 +25,11 @@ namespace golf_net
 
 		public static FormAlpha  GetMainForm() { return m_formAlpha; }
 		
+		static public int CurrentPhage()
+		{
+			return m_formAlpha.m_phase;
+		}
+		
 		static public int ChageForm(int phase)
 		{
 			if(0 > phase || phase >= APC.PHASE_MAX)
@@ -39,7 +41,7 @@ namespace golf_net
 
 			if(m_formAlpha.InvokeRequired)
 			{
-				m_formAlpha.Invoke(new Tinvoke(ChageForm), phase);
+				m_formAlpha.Invoke(new PGN.Fnc_Int(ChageForm), phase);
 			}
 			else
 			{
@@ -52,15 +54,58 @@ namespace golf_net
 		}
 
 
-		static public int ChageUserList(int n)
+		static public int ChangeLobbyUserList(int n)
 		{
 			if(m_formAlpha.InvokeRequired)
 			{
-				m_formAlpha.Invoke(new Tinvoke(ChageUserList), n);
+				m_formAlpha.Invoke(new PGN.Fnc_Int(ChangeLobbyUserList), n);
 			}
 			else
 			{
-				m_formAlpha.formLobby.ChageUserList(n);
+				m_formAlpha.formLobby.ChangeLobbyUserList(n);
+			}
+
+			return APC.OK;
+		}
+
+
+		static public int ChangePlayPlayerInfo(int n)
+		{
+			if(m_formAlpha.InvokeRequired)
+			{
+				m_formAlpha.Invoke(new PGN.Fnc_Int(ChangePlayPlayerInfo), n);
+			}
+			else
+			{
+				m_formAlpha.formPlay.ChangePlayPlayerInfo(n);
+			}
+
+			return APC.OK;
+		}
+		static public int ChangeResultPlayerInfo(int n)
+		{
+			if(m_formAlpha.InvokeRequired)
+			{
+				m_formAlpha.Invoke(new PGN.Fnc_Int(ChangeResultPlayerInfo), n);
+			}
+			else
+			{
+				m_formAlpha.formResult.ChangeResultPlayerInfo(n);
+			}
+
+			return APC.OK;
+		}
+
+
+		static public int ShowMsgBox(object v)
+		{
+			if(m_formAlpha.InvokeRequired)
+			{
+				m_formAlpha.Invoke(new PGN.Fnc_Obj(ShowMsgBox), v);
+			}
+			else
+			{
+				m_formAlpha.ShowMsgBox(v);
 			}
 
 			return APC.OK;

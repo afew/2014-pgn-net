@@ -30,5 +30,24 @@ namespace golf_net
 		{
 			Program.ChageForm(APC.PHASE_BEGIN);
 		}
+
+
+		public void ChangeResultPlayerInfo(int n)
+		{
+			TuserInfo this_p = TcpApp.UserThis();
+			TuserInfo oppo_p = TcpApp.UserOppo();
+
+			textId0   .Text = this_p.name;
+			textScore0.Text = this_p.play.stroke.ToString();
+			textBonus0.Text = this_p.play.bonus .ToString();
+			textWin0  .Text = this_p.play.iswin .ToString();
+
+			textId1   .Text = oppo_p.name      ;
+			textScore1.Text = oppo_p.play.stroke.ToString();
+			textBonus1.Text = oppo_p.play.bonus .ToString();
+			textWin1  .Text = oppo_p.play.iswin .ToString();
+
+			this.Refresh();
+		}
 	}
 }

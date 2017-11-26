@@ -99,7 +99,7 @@ namespace PGN
 				return NTC.EFAIL;
 
 			EndPoint	sdH   = scH.RemoteEndPoint;
-			uint		netId = PGN.Packet.GetSocketId(ref scH);
+			uint		netId = PGN.Packet.SocketId(ref scH);
 			TcpCln		pCln  = new TcpCln(netId);
 
 			pCln.Create(this, scH, sdH);
@@ -165,13 +165,13 @@ namespace PGN
 			{
 				PGLog.LOGW("WorkAcp::SocketException::" + e0.ToString() );
 				hr = NTC.EFAIL_SOCK;
-				IoEvent(NTC.EV_ACCEPT, hr, this.m_scH, 0, this);
+				IoEvnt(NTC.EV_ACCEPT, hr, this.m_scH, 0, this);
 			}
 			catch(Exception e1)
 			{
 				PGLog.LOGW("WorkAcp::Exception::" + e1.ToString() );
 				hr = NTC.EFAIL;
-				IoEvent(NTC.EV_ACCEPT, hr, this.m_scH, 0, this);
+				IoEvnt(NTC.EV_ACCEPT, hr, this.m_scH, 0, this);
 			}
 		}
 	}
