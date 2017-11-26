@@ -16,18 +16,6 @@ using PGN;
 
 public partial class TcpApp
 {
-	// Begin of shg
-	public delegate void network_callback();
-
-	public static network_callback connectionok_callback = null;
-	public static network_callback connectionfail_callback = null;
-	public static network_callback disconnect_callback = null;
-	public static network_callback SC_ANS_LOGIN_callback = null;
-	public static network_callback SC_BROADCAST_USERLIST_callback = null;
-	public static network_callback SC_BROADCAST_LOGOUT_callback = null;
-
-	// end of shg
-
 	public static int invited_rep(int btnRet, object v)
 	{
 		DialogResult ret= (DialogResult)btnRet;
@@ -70,11 +58,6 @@ public partial class TcpApp
 		{
 			PGLog.LOGI("OnIoEvent: gracefully closed");
 			golf_net.Program.ChageForm(golf_net.APC.PHASE_BEGIN);
-
-			if (disconnect_callback != null)
-			{
-				disconnect_callback();
-			}
 		}
 
 		else if(NTC.EV_ACCEPT == ev)
@@ -89,21 +72,6 @@ public partial class TcpApp
 			if(NTC.OK != hr)
 			{
 				PGLog.LOGW("OnIoEvent: Connection Failed");
-			}
-
-			if (NTC.OK != hr)
-			{
-				if (connectionfail_callback != null)
-				{
-					connectionfail_callback();
-				}
-			}
-			else
-			{
-				if (connectionok_callback != null)
-				{
-					connectionok_callback();
-				}
 			}
 		}
 
@@ -127,11 +95,6 @@ public partial class TcpApp
 			    PGLog.LOGI("OnIoEvent: disconnected");
 			    TcpCln	pCln = (TcpCln)data;
 			    golf_net.Program.ChageForm(golf_net.APC.PHASE_BEGIN);
-
-				if (disconnect_callback != null)
-				{
-					disconnect_callback();
-				}
 
 			    return NTC.OK;
 			}
@@ -189,11 +152,6 @@ public partial class TcpApp
 
 				// change the phase of the application
 				golf_net.Program.ChageForm(golf_net.APC.PHASE_LOBBY);
-
-				if (SC_ANS_LOGIN_callback != null)
-				{
-					SC_ANS_LOGIN_callback();
-				}
 			}
 
 			else if(NTC.SC_BROADCAST_USERLIST == opp)
@@ -226,11 +184,6 @@ public partial class TcpApp
 
 
 				golf_net.Program.ChangeLobbyUserList(0);
-
-				if (SC_BROADCAST_USERLIST_callback != null)
-				{
-					SC_BROADCAST_USERLIST_callback();
-				}
 			}
 
 			else if(NTC.SC_BROADCAST_LOGOUT == opp)
@@ -254,11 +207,6 @@ public partial class TcpApp
 
 				golf_net.Program.ChangeLobbyUserList(0);
 				PGLog.LOGI("OnIoEvent:NTC.SC_BROADCAST_LOGOUT::" + name);
-
-				if (SC_BROADCAST_LOGOUT_callback != null)
-				{
-					SC_BROADCAST_LOGOUT_callback();
-				}
 			}
 			
 			else if(NTC.CS_REQ_BROADCAST == opp)
@@ -476,14 +424,6 @@ public partial class TcpApp
 
 					golf_net.Program.ChangePlayPlayerInfo(0);
 					golf_net.Program.ChangeResultPlayerInfo(0);
-				}
-				else if (NTC.GP_HEARTBEAT == gpp)
-				{
-					idx_bgn= NTC.PCK_HEAD + 2;
-					int iData = 0;
-					Packet.ValFromBuf(ref iData, rcv, idx_bgn + 0 * 4);
-
-					PGLog.LOGI("Heartbeat : " + iData);
 				}
 			}
 

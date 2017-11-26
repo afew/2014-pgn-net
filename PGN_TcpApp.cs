@@ -61,7 +61,7 @@ public class TplayMap
 // Initial network data
 public partial class TcpApp
 {
-	public static string	net_ip		= "192.168.0.253";
+	public static string	net_ip		= "192.168.0.76";
 	//public static string	net_ip		= "192.168.0.74";
 	//public static string	net_ip		= "192.168.0.20";
 	public static string	net_pt		= "20001";

@@ -220,26 +220,6 @@ public partial class TcpApp
 		return hr;
 	}
 
-	public static int SendHeartbeat()
-	{
-		PGLog.LOGI("TcpApp::SendHeartbeat");
-
-		TcpCln pNet = TcpApp.GetMainNet();
-		int hr = 0;
-
-		ushort opp = NTC.CS_REQ_BROADCAST;
-		ushort gpp = NTC.GP_HEARTBEAT;
-
-		m_wrkPck.Reset();
-		m_wrkPck.AddData(gpp);
-		int iData = 777;
-		m_wrkPck.AddData(iData);
-		m_wrkPck.EnCode(opp);
-
-		hr = pNet.Send(m_wrkPck);
-		return hr;
-	}
-
 
 	public static int SendReady(byte bReady)
 	{

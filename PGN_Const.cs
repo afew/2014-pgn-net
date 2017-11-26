@@ -82,7 +82,6 @@ namespace PGN
 		public const ushort	GP_PLAY_PUTT			= GP_DEFAULT + 5	;		// Putting
 		public const ushort	GP_PLAY_BPOS			= GP_DEFAULT + 6	;		// Ball Stop position
 		public const ushort	GP_PLAY_END				= GP_DEFAULT + 7	;		// End
-		public const ushort GP_HEARTBEAT            = GP_DEFAULT + 8    ;       // Network Heartbeat.
 	}
 }
 
