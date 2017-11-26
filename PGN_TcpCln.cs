@@ -253,6 +253,9 @@ namespace PGN
 											.GetString(b, 0, l).Trim();
 
 							Console.WriteLine(s_chat);
+
+							int op = PGN.NTC.OP_CHAT;
+							this.Send("server send::" + s_chat, op);
 						}
 					}
 
@@ -293,7 +296,7 @@ namespace PGN
 						m_sndC = 0;
 					}
 
-					Console.WriteLine("IoComplete::Send compelte");
+					Console.WriteLine("IoComplete::Send complete");
 					return;
 				}
 			}
@@ -314,6 +317,7 @@ namespace PGN
 
 		public int Send(string str, int op)
 		{
+			bool hr;
 			if( 0 > this.IsConnected || 0 < m_sndC)
 				return NTC.EFAIL;
 
@@ -340,7 +344,12 @@ namespace PGN
 				m_arSnd.SetBuffer(m_sndB[m_sndN], 0, nSnd);
 				m_sndC = 1;
 
-				m_scH.SendAsync(m_arSnd);
+				hr = m_scH.SendAsync(m_arSnd);
+
+				if(true == hr)
+				{
+					// wait...
+				}
 			}
 
 			return NTC.OK;

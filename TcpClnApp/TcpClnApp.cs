@@ -15,7 +15,7 @@ class TcpClnApp
 		PGN.TcpCln	pNet = new PGN.TcpCln();
 		PGN.Packet	pPck = new PGN.Packet();
 
-		pNet.Create(null, "127.0.0.1", 20000);
+		pNet.Create(null, "192.168.0.20", 20000);
 		pNet.Connect();
 
 		int c = 0;
