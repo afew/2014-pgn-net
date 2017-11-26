@@ -19,7 +19,7 @@ namespace ydnet
 		private void button1_Click(object sender,EventArgs e)
 		{
 			MessageBox.Show("Hello world");
-			Program.GetMainForm().ChageForm(YDC.PHASE_PLAY);
+			Program.GetMainForm().ChageForm(PGC.PHASE_PLAY);
 		}
 
 		private void usrLst_SelectedIndexChanged(object sender,EventArgs e)

@@ -18,7 +18,7 @@ namespace ydnet
 
 		private void Shot_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(YDC.PHASE_RESULT);
+			Program.GetMainForm().ChageForm(PGC.PHASE_RESULT);
 		}
 	}
 }

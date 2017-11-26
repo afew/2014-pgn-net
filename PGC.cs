@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace ydnet
 {
-	static class YDC
+	static class PGC
 	{
 		public const int OK			=  0;
 		public const int EFAIL		= -1;

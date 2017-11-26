@@ -16,12 +16,21 @@ namespace ydnet
 			InitializeComponent();
 			this.txtUID.Text = "User Id";
 			this.txtPWD.Text = "User Password";
+
+			this.textIP.Text = "127.0.0.1";
+			this.textPt.Text = "50000";
 		}
 
 		private void btnLogin_Click(object sender,EventArgs e)
 		{
-			MessageBox.Show("Hello world");
-			Program.GetMainForm().ChageForm(YDC.PHASE_LOBBY);
+			FormAlpha	formAlpha = Program.GetMainForm();
+
+			formAlpha.ChageForm(PGC.PHASE_LOBBY);
+		}
+
+		private void FormBegin_Load(object sender,EventArgs e)
+		{
+			this.txtUID.Select();
 		}
 	}
 

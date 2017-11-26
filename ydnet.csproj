@@ -60,7 +60,7 @@
     <Compile Include="FormBegin.Designer.cs">
       <DependentUpon>FormBegin.cs</DependentUpon>
     </Compile>
-    <Compile Include="YDC.cs">
+    <Compile Include="PGC.cs">
     </Compile>
     <Compile Include="FormLobby.cs">
       <SubType>Form</SubType>
@@ -80,6 +80,8 @@
     <Compile Include="FormResult.Designer.cs">
       <DependentUpon>FormResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="PGN_Base.cs" />
+    <Compile Include="PGN_Tcln.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormAlpha.resx">

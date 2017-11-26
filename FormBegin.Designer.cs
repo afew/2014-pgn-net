@@ -34,7 +34,7 @@
 			this.UID = new System.Windows.Forms.Label();
 			this.PWD = new System.Windows.Forms.Label();
 			this.textIP = new System.Windows.Forms.TextBox();
-			this.textPort = new System.Windows.Forms.TextBox();
+			this.textPt = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -100,14 +100,14 @@
 			this.textIP.Size = new System.Drawing.Size(229,24);
 			this.textIP.TabIndex = 0;
 			// 
-			// textPort
+			// textPt
 			// 
-			this.textPort.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.textPort.Location = new System.Drawing.Point(191,114);
-			this.textPort.Margin = new System.Windows.Forms.Padding(4);
-			this.textPort.Name = "textPort";
-			this.textPort.Size = new System.Drawing.Size(64,24);
-			this.textPort.TabIndex = 1;
+			this.textPt.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
+			this.textPt.Location = new System.Drawing.Point(191,114);
+			this.textPt.Margin = new System.Windows.Forms.Padding(4);
+			this.textPt.Name = "textPt";
+			this.textPt.Size = new System.Drawing.Size(64,24);
+			this.textPt.TabIndex = 1;
 			// 
 			// label1
 			// 
@@ -139,7 +139,7 @@
 			this.ControlBox = false;
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.textPort);
+			this.Controls.Add(this.textPt);
 			this.Controls.Add(this.textIP);
 			this.Controls.Add(this.PWD);
 			this.Controls.Add(this.UID);
@@ -151,6 +151,7 @@
 			this.Name = "FormBegin";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Begin";
+			this.Load += new System.EventHandler(this.FormBegin_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -158,13 +159,13 @@
 
 		#endregion
 
+		private System.Windows.Forms.TextBox textIP;
+		private System.Windows.Forms.TextBox textPt;
 		private System.Windows.Forms.TextBox txtUID;
 		private System.Windows.Forms.TextBox txtPWD;
 		private System.Windows.Forms.Button Login;
 		private System.Windows.Forms.Label UID;
 		private System.Windows.Forms.Label PWD;
-		private System.Windows.Forms.TextBox textIP;
-		private System.Windows.Forms.TextBox textPort;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 	}

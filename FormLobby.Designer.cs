@@ -40,7 +40,7 @@
 			// button1
 			// 
 			this.button1.Font = new System.Drawing.Font("Tahoma",10F,System.Drawing.FontStyle.Regular,System.Drawing.GraphicsUnit.Point,((byte)(129)));
-			this.button1.Location = new System.Drawing.Point(317,430);
+			this.button1.Location = new System.Drawing.Point(317,398);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(252,61);
 			this.button1.TabIndex = 2;
@@ -55,7 +55,7 @@
 			this.listUsr.ItemHeight = 16;
 			this.listUsr.Location = new System.Drawing.Point(21,23);
 			this.listUsr.Name = "listUsr";
-			this.listUsr.Size = new System.Drawing.Size(252,468);
+			this.listUsr.Size = new System.Drawing.Size(252,436);
 			this.listUsr.TabIndex = 0;
 			this.listUsr.SelectedIndexChanged += new System.EventHandler(this.usrLst_SelectedIndexChanged);
 			// 

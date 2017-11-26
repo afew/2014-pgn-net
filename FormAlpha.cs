@@ -14,7 +14,7 @@ namespace ydnet
 {
 	public partial class FormAlpha:Form
 	{
-		protected int			m_phase   = YDC.PHASE_BEGIN;
+		protected int			m_phase   = PGC.PHASE_BEGIN;
 		protected List<Form>	m_form    = new List<Form>();
 		FormBegin				formBegin = new FormBegin();
 		FormLobby				formLobby = new FormLobby();
@@ -48,18 +48,18 @@ namespace ydnet
 
 		public int ChageForm(int phase)
 		{
-			if(0 > phase || phase >= YDC.PHASE_MAX)
-				return YDC.EFAIL;
+			if(0 > phase || phase >= PGC.PHASE_MAX)
+				return PGC.EFAIL;
 
 			if(m_phase == phase)
-				return YDC.OK_AL;
+				return PGC.OK_AL;
 
 
 			m_form[m_phase].Hide();
 			m_phase = phase;
 			m_form[m_phase].Show();
 
-			return YDC.OK;
+			return PGC.OK;
 		}
 
 		private void FormAlpha_Load(object sender,EventArgs e)

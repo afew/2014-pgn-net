@@ -18,17 +18,17 @@ namespace ydnet
 
 		private void btnLobby_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(YDC.PHASE_LOBBY);
+			Program.GetMainForm().ChageForm(PGC.PHASE_LOBBY);
 		}
 
 		private void btnReplay_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(YDC.PHASE_PLAY);
+			Program.GetMainForm().ChageForm(PGC.PHASE_PLAY);
 		}
 
 		private void btnQuit_Click(object sender,EventArgs e)
 		{
-			Program.GetMainForm().ChageForm(YDC.PHASE_BEGIN);
+			Program.GetMainForm().ChageForm(PGC.PHASE_BEGIN);
 		}
 	}
 }
